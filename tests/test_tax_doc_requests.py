@@ -116,13 +116,13 @@ def test_process_skips_done_and_logs_errors(tmp_path):
     clients = t.load_clients(SAMPLE)
     clients.append(t.Client(row=9, email="not-an-email", first_name="Bad"))
     dbx, ol = RecordingDropbox(), RecordingOutlook()
-    recs = t.process(clients, dbx, ol, SETTINGS, "/File requests/2025 Tax Documents", [],
+    recs = t.process(clients, dbx, ol, SETTINGS, "/File requests", [],
                      done={"alex@example.com"}, log=lambda *_: None)
     assert [d[2] for d in ol.drafts] == ["Jane & John Sample - 2025 Tax Documents",
                                          "Priya Demo & Ravi Test - 2025 Tax Documents"]
     assert ol.drafts[0][1] == ["john.sample@example.com"]  # spouse CC'd
-    assert dbx.calls[0][1] == \
-        "/File requests/2025 Tax Documents/Jane & John Sample - 2025 Tax Documents"
+    assert dbx.calls[0] == ("Jane & John Sample - 2025 Tax Documents",
+                            "/File requests/Jane & John Sample")
     assert [r[9] for r in recs] == ["Done", "Done", "Error"]
 
     log = tmp_path / "log.xlsx"
@@ -137,3 +137,15 @@ def test_dry_run_end_to_end(tmp_path):
     previews = sorted((tmp_path / "c_previews").glob("*.html"))
     assert len(previews) == 3
     assert not (tmp_path / "c_requests_log.xlsx").exists()
+
+
+def test_mfj_from_spouse_columns_without_filing_status(tmp_path):
+    p = make_xlsx(tmp_path, [
+        ["First Name", "Last Name", "Email", "Spouse First Name", "Spouse Email"],
+        ["Tejas", "Girase", "tejasgirasr@gmail.com", "Anita", "anita@example.com"],
+        ["Sam", "Solo", "sam@example.com", None, None],
+    ])
+    tejas, sam = t.load_clients(p)
+    assert tejas.is_mfj and not tejas.is_new  # no client type column -> returning
+    assert tejas.display_name == "Tejas & Anita Girase"
+    assert not sam.is_mfj

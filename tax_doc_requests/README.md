@@ -3,7 +3,7 @@
 `send_tax_requests.py` reads your client list (Excel). For each client it:
 
 1. Creates a Dropbox **file request** named `Tejas & Anita Girase - 2025 Tax Documents`. Uploads
-   go to `/File requests/2025 Tax Documents/<that name>`. If an open request with the same
+   go to `/File requests/<client>` (e.g. `/File requests/Tejas & Anita Girase`). If an open request with the same
    name already exists, the script reuses it.
 2. Writes the standard request email with the upload link in it.
    - **Returning client:** the standard email only.
@@ -26,7 +26,7 @@ Column names are matched loosely (case, spaces and dashes don't matter). See `sa
 | last name | Last Name | |
 | spouse first / last name | Spouse First Name, Spouse Last Name | Spouse last name defaults to the client's |
 | spouse email | Spouse Email | CC'd on the draft |
-| filing status | Filing Status | `MFJ` / `Married Filing Jointly`. If it's blank and a spouse is listed, the row is treated as MFJ |
+| filing status | Filing Status | Optional. Without it, a client with a spouse name or spouse email in the list is treated as MFJ |
 | client type | Client Type, New/Returning | `New` or `Returning`. If it's blank, the row is treated as **returning**. Use `--default-new` to flip that |
 | full name | Name, Client Name | *Can replace the first and last name columns. `Tejas & Anita Girase`, `Tejas Girase & Anita Patel` and `Girase, Tejas` are all understood |
 

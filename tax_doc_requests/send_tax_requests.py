@@ -84,8 +84,8 @@ class Client:
         fs = self.filing_status.strip().lower()
         if fs:
             return fs in MFJ_VALUES
-        # No filing status given: treat a listed spouse as a joint return.
-        return bool(self.spouse_first_name)
+        # No filing status given: a spouse name or spouse email in the list means MFJ.
+        return bool(self.spouse_first_name or self.spouse_email)
 
     @property
     def display_name(self) -> str:
@@ -562,7 +562,7 @@ def process(clients: list[Client], dropbox_client, outlook, settings: EmailSetti
 
         link, req_state, draft_state = "", "", ""
         try:
-            folder = f"{dropbox_root.rstrip('/')}/{safe_folder_name(title)}"
+            folder = f"{dropbox_root.rstrip('/')}/{safe_folder_name(c.display_name)}"
             link, created = dropbox_client.get_or_create(title, folder, deadline)
             req_state = "Created" if created else "Reused"
             subject, body = build_email(c, link, settings)
@@ -611,8 +611,8 @@ def parse_args(argv=None) -> argparse.Namespace:
     run.add_argument("--limit", type=int, help="process at most N rows (for a test batch)")
 
     run.add_argument("--dropbox-root", default=None,
-                     help="Dropbox folder for uploads (default: '/File requests/<year> Tax "
-                          "Documents')")
+                     help="Dropbox parent folder; each client gets <root>/<client name> "
+                          "(default: '/File requests')")
     run.add_argument("--team-space", action="store_true",
                      help="Dropbox Business: create in the team space")
     run.add_argument("--deadline", help="optional upload deadline, YYYY-MM-DD (paid plans)")
@@ -687,7 +687,7 @@ def main(argv=None) -> int:
     settings = EmailSettings(tax_year=args.tax_year, sender_name=args.sender_name,
                              firm_name=args.firm_name, booking_url=args.booking_url,
                              attach_checklist=bool(attachments))
-    root = args.dropbox_root or f"/File requests/{args.tax_year} Tax Documents"
+    root = args.dropbox_root or "/File requests"
     deadline = datetime.strptime(args.deadline, "%Y-%m-%d") if args.deadline else None
 
     n_new = sum(c.is_new for c in todo)
