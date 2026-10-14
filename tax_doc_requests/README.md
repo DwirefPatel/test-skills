@@ -6,9 +6,10 @@
    go to `/File requests/<client>` (e.g. `/File requests/Tejas & Anita Girase`). If an open request with the same
    name already exists, the script reuses it.
 2. Writes the standard request email with the upload link in it.
-   - **Returning client:** the standard email only.
-   - **New client:** the email also asks for last year's (2024) federal and state return and a
-     Driver's License / State ID. When the client is MFJ, it asks for both spouses' licenses.
+   - **New client:** the email also asks for last year's (2024) federal and state return.
+   - **MFJ, new or returning:** the email asks for both spouses' Driver's License / State ID.
+   - **Single new client:** the email asks for their own Driver's License / State ID.
+   - **Single returning client:** the standard email only.
 3. Saves the email as a **draft** in Outlook, addressed to the client, with the spouse CC'd
    when a spouse email is listed. `templates/Document checklist & Questionnaire.xlsx` is
    attached. **Nothing is sent.** You review the drafts and send them yourself.

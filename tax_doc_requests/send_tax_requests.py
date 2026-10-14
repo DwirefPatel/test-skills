@@ -5,7 +5,8 @@ For every row in the client list (Excel):
 1. Create (or reuse) a Dropbox file request titled
    "<Tejas & Anita Girase> - <2025> Tax Documents".
 2. Build the request email from the firm's standard wording. New clients are also asked for
-   last year's tax return and a Driver's License / State ID (for both spouses when MFJ).
+   last year's tax return and a Driver's License / State ID; every MFJ client (new or
+   returning) is asked for both spouses' Driver's Licenses.
 3. Save the email as a draft in Outlook, addressed to the client, with the
    "Document checklist & Questionnaire.xlsx" attached. Nothing is sent.
 
@@ -231,7 +232,7 @@ def validate_client(c: Client) -> str | None:
         return f"invalid email: {', '.join(bad)}"
     if not c.first_name:
         return "missing first name"
-    if c.is_mfj and c.is_new and not c.spouse_first_name:
+    if c.is_mfj and not c.spouse_first_name:
         c.warnings.append("MFJ but no spouse name; spouse's Driver's License asked for generically")
     return None
 
@@ -262,15 +263,20 @@ def request_title(c: Client, tax_year: int) -> str:
     return f"{c.display_name} - {tax_year} Tax Documents"
 
 
-def new_client_items(c: Client, tax_year: int) -> list[str]:
-    """Extra documents asked of new clients only."""
-    prior = tax_year - 1
-    items = [f"Copy of your {prior} federal and state income tax returns"]
+def extra_items(c: Client, tax_year: int) -> list[str]:
+    """Documents asked for on top of the checklist.
+
+    New clients: last year's return. MFJ (new or returning): both spouses' Driver's Licenses.
+    New single filers: their own Driver's License. Returning single filers: nothing extra.
+    """
+    items = []
+    if c.is_new:
+        items.append(f"Copy of your {tax_year - 1} federal and state income tax returns")
     if c.is_mfj:
         spouse = c.spouse_first_name.strip() or "your spouse"
         items.append(f"Driver's License / State ID (front and back) for both "
                      f"{c.first_name.strip()} and {spouse}")
-    else:
+    elif c.is_new:
         items.append("Driver's License / State ID (front and back)")
     return items
 
@@ -285,10 +291,12 @@ def build_email(c: Client, link: str, s: EmailSettings) -> tuple[str, str]:
     if s.attach_checklist:
         parts.append(p("Please find the attached checklist for documents upload &amp; the "
                        "questionnaire."))
-    if c.is_new:
-        items = "".join(f"<li>{e(i)}</li>" for i in new_client_items(c, s.tax_year))
-        parts.append(p("Since this is our first year working together, please also upload:")
-                     + f'<ul style="margin:0 0 12px 0">{items}</ul>')
+    extras = extra_items(c, s.tax_year)
+    if extras:
+        intro = ("Since this is our first year working together, please also upload:"
+                 if c.is_new else "Please also upload:")
+        items = "".join(f"<li>{e(i)}</li>" for i in extras)
+        parts.append(p(intro) + f'<ul style="margin:0 0 12px 0">{items}</ul>')
     parts.append(p("Please use below link to upload the documents"))
     parts.append(p(f'<a href="{e(link, quote=True)}">{e(title)}</a>'))
     parts.append(p(f"Kind Regards,<br><br>{e(s.sender_name)}<br>"
