@@ -64,14 +64,13 @@ def test_column_override(tmp_path):
     assert (c.email, c.first_name) == ("a@b.com", "Ann")
 
 
-def test_returning_mfj_asks_both_licenses_but_no_prior_return():
+def test_returning_mfj_has_no_extra_asks():
     c = t.Client(row=2, email="x@y.com", first_name="Tejas", last_name="Girase",
                  spouse_first_name="Anita", filing_status="MFJ", is_new=False)
     subject, body = t.build_email(c, LINK, SETTINGS)
     assert subject == "Tejas & Anita Girase - 2025 Tax Documents"
     assert "Hi Tejas," in body and LINK in body
-    assert "2024" not in body and "first year" not in body
-    assert "Please also upload:" in body and "for both Tejas and Anita" in body
+    assert "2024" not in body and "Driver" not in body and "also upload" not in body
 
 
 def test_returning_single_has_no_extra_asks():
