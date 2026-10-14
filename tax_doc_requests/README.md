@@ -26,7 +26,7 @@ Column names are matched loosely (case, spaces and dashes don't matter). See `sa
 | last name | Last Name | |
 | spouse first / last name | Spouse First Name, Spouse Last Name | Spouse last name defaults to the client's |
 | spouse email | Spouse Email | CC'd on the draft |
-| filing status | Filing Status | Optional. Without it, a client with a spouse name or spouse email in the list is treated as MFJ |
+| filing status | Filing Status | Recommended. `MFJ` / `Married Filing Jointly` means MFJ. Any other value (Single, MFS, HOH) is not MFJ, even if a spouse is listed. When the cell is blank, a spouse name or spouse email means MFJ |
 | client type | Client Type, New/Returning | `New` or `Returning`. If it's blank, the row is treated as **returning**. Use `--default-new` to flip that |
 | full name | Name, Client Name | *Can replace the first and last name columns. `Tejas & Anita Girase`, `Tejas Girase & Anita Patel` and `Girase, Tejas` are all understood |
 
