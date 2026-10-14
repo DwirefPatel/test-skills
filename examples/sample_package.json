@@ -1,0 +1,543 @@
+{
+  "client": "Sample Client",
+  "tax_year": 2025,
+  "broker": "Example Brokerage",
+  "statement_date": "2026-02-14",
+  "corrected": false,
+  "recipient_tin_last4": "123-45-6789",
+  "payers": [
+    {
+      "name": "Example Brokerage LLC",
+      "ein": "12-3456789",
+      "account_last4": "ACCT-00005678",
+      "forms": [
+        "1099-B",
+        "1099-DIV",
+        "1099-INT",
+        "1099-OID",
+        "1099-MISC"
+      ]
+    },
+    {
+      "name": "Example Digital Assets LLC",
+      "ein": "98-7654321",
+      "account_last4": "9999",
+      "forms": [
+        "1099-DA"
+      ]
+    }
+  ],
+  "forms_present": [
+    "1099-B",
+    "1099-DA",
+    "1099-DIV",
+    "1099-INT",
+    "1099-OID",
+    "1099-MISC"
+  ],
+  "lots": [
+    {
+      "box": "A",
+      "description": "APPLE INC",
+      "cusip": "037833100",
+      "quantity": "50",
+      "date_acquired": "2025-01-10",
+      "date_sold": "2025-03-03",
+      "proceeds": "11250.00",
+      "cost": "12000.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "-750.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 7
+    },
+    {
+      "box": "A",
+      "description": "APPLE INC",
+      "cusip": "037833100",
+      "quantity": "20",
+      "date_acquired": "2025-03-10",
+      "date_sold": "2025-04-15",
+      "proceeds": "3900.00",
+      "cost": "4400.00",
+      "wash_sale": "500.00",
+      "market_discount": "0",
+      "broker_gain": "0.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 7
+    },
+    {
+      "box": "A",
+      "description": "APPLE INC",
+      "cusip": "037833100",
+      "quantity": "30",
+      "date_acquired": "2025-04-20",
+      "date_sold": "2025-11-28",
+      "proceeds": "7050.00",
+      "cost": "6650.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "400.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 7
+    },
+    {
+      "box": "A",
+      "description": "TESLA INC",
+      "cusip": "88160R101",
+      "quantity": "10",
+      "date_acquired": "2025-02-03",
+      "date_sold": "2025-02-20",
+      "proceeds": "3100.00",
+      "cost": "3300.00",
+      "wash_sale": "350.00",
+      "market_discount": "0",
+      "broker_gain": "150.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "Aggregated lots",
+      "source_page": 8
+    },
+    {
+      "box": "A",
+      "description": "TESLA INC",
+      "cusip": "88160R101",
+      "quantity": "10",
+      "date_acquired": "2025-02-25",
+      "date_sold": "2025-06-02",
+      "proceeds": "3000.00",
+      "cost": "3450.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "-450.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 8
+    },
+    {
+      "box": "A",
+      "description": "SPDR S&P 500 ETF TRUST",
+      "cusip": "78462F103",
+      "quantity": "5",
+      "date_acquired": "2025-05-01",
+      "date_sold": "2025-06-20",
+      "proceeds": "2900.00",
+      "cost": "2700.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "200.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 8
+    },
+    {
+      "box": "A",
+      "description": "US TREASURY BILL 0% 08/14/25",
+      "cusip": "912797KX4",
+      "quantity": "10000",
+      "date_acquired": "2025-02-13",
+      "date_sold": "2025-08-14",
+      "proceeds": "10000.00",
+      "cost": "9790.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "210.00",
+      "ordinary": true,
+      "account": "5678",
+      "notes": "Ordinary: discount",
+      "source_page": 9
+    },
+    {
+      "box": "D",
+      "description": "MICROSOFT CORP",
+      "cusip": "594918104",
+      "quantity": "40",
+      "date_acquired": "2019-06-03",
+      "date_sold": "2025-07-14",
+      "proceeds": "20100.00",
+      "cost": "5200.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "14900.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 10
+    },
+    {
+      "box": "D",
+      "description": "VANGUARD TOTAL BOND MARKET ETF",
+      "cusip": "921937835",
+      "quantity": "100",
+      "date_acquired": "2020-01-15",
+      "date_sold": "2025-09-30",
+      "proceeds": "7300.00",
+      "cost": "8350.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "-1050.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 10
+    },
+    {
+      "box": "B",
+      "description": "GENERAL ELECTRIC CO",
+      "cusip": "369604301",
+      "quantity": "25",
+      "date_acquired": "VARIOUS",
+      "date_sold": "2025-05-12",
+      "proceeds": "4125.00",
+      "cost": null,
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": null,
+      "ordinary": false,
+      "account": "5678",
+      "notes": "Noncovered",
+      "source_page": 11
+    },
+    {
+      "box": "B",
+      "description": "ABC CORP CVR",
+      "cusip": "000360206",
+      "quantity": "100",
+      "date_acquired": "2025-01-02",
+      "date_sold": "2025-10-01",
+      "proceeds": "40.00",
+      "cost": "0.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "40.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "CVR",
+      "source_page": 11
+    },
+    {
+      "box": "E",
+      "description": "COCA COLA CO",
+      "cusip": "191216100",
+      "quantity": "60",
+      "date_acquired": "2008-04-01",
+      "date_sold": "2025-08-18",
+      "proceeds": "4200.00",
+      "cost": "1500.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "2700.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "Original basis: 1,500.00",
+      "source_page": 12
+    },
+    {
+      "box": "X",
+      "description": "OLD MUTUAL FUND",
+      "cusip": "001234AB9",
+      "quantity": "75",
+      "date_acquired": null,
+      "date_sold": "2025-12-05",
+      "proceeds": "2600.00",
+      "cost": null,
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": null,
+      "ordinary": false,
+      "account": "5678",
+      "notes": "Term unknown",
+      "source_page": 13
+    },
+    {
+      "box": "G",
+      "description": "BITCOIN",
+      "cusip": "BTC",
+      "quantity": "0.05",
+      "date_acquired": "2025-03-01",
+      "date_sold": "2025-09-01",
+      "proceeds": "5500.00",
+      "cost": "4100.00",
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": "1400.00",
+      "ordinary": false,
+      "account": "5678",
+      "notes": "",
+      "source_page": 20
+    },
+    {
+      "box": "H",
+      "description": "ETHEREUM",
+      "cusip": "ETH",
+      "quantity": "1.2",
+      "date_acquired": "2024-11-01",
+      "date_sold": "2025-04-01",
+      "proceeds": "2100.00",
+      "cost": null,
+      "wash_sale": "0",
+      "market_discount": "0",
+      "broker_gain": null,
+      "ordinary": false,
+      "account": "5678",
+      "notes": "Noncovered digital asset",
+      "source_page": 21
+    }
+  ],
+  "box_totals": [
+    {
+      "box": "A",
+      "proceeds": "41200.00",
+      "cost": "42290.00",
+      "wash_sale": "850.00",
+      "market_discount": "0.00",
+      "gain": "-240.00",
+      "source_page": 3
+    },
+    {
+      "box": "D",
+      "proceeds": "27400.00",
+      "cost": "13550.00",
+      "wash_sale": "0",
+      "market_discount": "0.00",
+      "gain": "13850.00",
+      "source_page": 3
+    },
+    {
+      "box": "B",
+      "proceeds": "4165.00",
+      "cost": null,
+      "wash_sale": "0",
+      "market_discount": "0.00",
+      "gain": "40.00",
+      "source_page": 3
+    },
+    {
+      "box": "E",
+      "proceeds": "4200.00",
+      "cost": "1500.00",
+      "wash_sale": "0",
+      "market_discount": "0.00",
+      "gain": "2700.00",
+      "source_page": 3
+    },
+    {
+      "box": "X",
+      "proceeds": "2600.00",
+      "cost": null,
+      "wash_sale": "0",
+      "market_discount": "0.00",
+      "gain": null,
+      "source_page": 3
+    },
+    {
+      "box": "G",
+      "proceeds": "5500.00",
+      "cost": "4100.00",
+      "wash_sale": "0",
+      "market_discount": "0.00",
+      "gain": "1400.00",
+      "source_page": 19
+    },
+    {
+      "box": "H",
+      "proceeds": "2100.00",
+      "cost": null,
+      "wash_sale": "0",
+      "market_discount": "0.00",
+      "gain": null,
+      "source_page": 19
+    }
+  ],
+  "income_lines": [
+    {
+      "form": "DIV",
+      "box": "1a",
+      "amount": "62.40",
+      "description": "APPLE INC",
+      "cusip": "037833100",
+      "pay_date": "2025-02-13",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "1a",
+      "amount": "210.00",
+      "description": "MICROSOFT CORP",
+      "cusip": "594918104",
+      "pay_date": "2025-06-12",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "1a",
+      "amount": "18.30",
+      "description": "SPDR S&P 500 ETF TRUST",
+      "cusip": "78462F103",
+      "pay_date": "2025-06-01",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "1a",
+      "amount": "245.10",
+      "description": "VANGUARD TOTAL BOND MARKET ETF",
+      "cusip": "921937835",
+      "pay_date": "2025-08-01",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "1b",
+      "amount": "62.40",
+      "description": "APPLE INC",
+      "cusip": "037833100",
+      "pay_date": "2025-02-13",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "1b",
+      "amount": "210.00",
+      "description": "MICROSOFT CORP",
+      "cusip": "594918104",
+      "pay_date": "2025-06-12",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "1b",
+      "amount": "18.30",
+      "description": "SPDR S&P 500 ETF TRUST",
+      "cusip": "78462F103",
+      "pay_date": "2025-06-01",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "2a",
+      "amount": "35.00",
+      "description": "VANGUARD TOTAL BOND MARKET ETF",
+      "cusip": "921937835",
+      "pay_date": "2025-12-20",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "7",
+      "amount": "4.10",
+      "description": "SPDR S&P 500 ETF TRUST",
+      "cusip": "78462F103",
+      "pay_date": "2025-06-01",
+      "source_page": 4
+    },
+    {
+      "form": "INT",
+      "box": "1",
+      "amount": "88.12",
+      "description": "Cash sweep interest",
+      "source_page": 5
+    },
+    {
+      "form": "INT",
+      "box": "3",
+      "amount": "120.00",
+      "description": "US Treasury note interest",
+      "source_page": 5
+    },
+    {
+      "form": "MISC",
+      "box": "8",
+      "amount": "15.75",
+      "description": "Substitute payment - MICROSOFT",
+      "source_page": 6
+    }
+  ],
+  "form_totals": [
+    {
+      "form": "DIV",
+      "box": "1a",
+      "amount": "535.80",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "1b",
+      "amount": "290.70",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "2a",
+      "amount": "35.00",
+      "source_page": 4
+    },
+    {
+      "form": "DIV",
+      "box": "7",
+      "amount": "4.10",
+      "source_page": 4
+    },
+    {
+      "form": "INT",
+      "box": "1",
+      "amount": "88.12",
+      "source_page": 4
+    },
+    {
+      "form": "INT",
+      "box": "3",
+      "amount": "120.00",
+      "source_page": 4
+    },
+    {
+      "form": "MISC",
+      "box": "8",
+      "amount": "15.75",
+      "source_page": 4
+    },
+    {
+      "form": "OID",
+      "box": "8",
+      "amount": "210.00",
+      "source_page": 6
+    }
+  ],
+  "other_items": [
+    {
+      "category": "margin_interest",
+      "description": "Margin interest paid",
+      "amount": "312.45",
+      "source_page": 30
+    },
+    {
+      "category": "adr_fee",
+      "description": "ADR custody fees",
+      "amount": "6.00",
+      "source_page": 30
+    },
+    {
+      "category": "section_1256",
+      "description": "Aggregate profit/(loss) on contracts (box 11)",
+      "amount": "-1250.00",
+      "source_page": 18
+    }
+  ],
+  "state_obligations": [
+    {
+      "description": "VANGUARD TOTAL BOND MARKET ETF",
+      "cusip": "921937835",
+      "percent": "0.4215",
+      "source_page": 31
+    }
+  ],
+  "source_file": "sample_consolidated_1099.pdf"
+}

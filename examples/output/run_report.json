@@ -1,0 +1,225 @@
+{
+  "workbook": "examples/output/SampleClient_2025_ExampleBrokerage_1099_Summary.xlsx",
+  "ok": true,
+  "client": "Sample Client",
+  "tax_year": 2025,
+  "broker": "Example Brokerage",
+  "corrected": false,
+  "payers": [
+    {
+      "name": "Example Brokerage LLC",
+      "ein": "12-3456789",
+      "account": "****5678"
+    },
+    {
+      "name": "Example Digital Assets LLC",
+      "ein": "98-7654321",
+      "account": "****9999"
+    }
+  ],
+  "entry_lines": [
+    {
+      "term": "Short-term",
+      "box": "A",
+      "proceeds": "31200.00",
+      "cost": "32500.00",
+      "code": "W",
+      "wash": "850.00",
+      "gain": "-450.00",
+      "lots": 6
+    },
+    {
+      "term": "Short-term - Ordinary",
+      "box": "A",
+      "proceeds": "10000.00",
+      "cost": "9790.00",
+      "code": "",
+      "wash": "0",
+      "gain": "210.00",
+      "lots": 1
+    },
+    {
+      "term": "Long-term",
+      "box": "D",
+      "proceeds": "27400.00",
+      "cost": "13550.00",
+      "code": "",
+      "wash": "0",
+      "gain": "13850.00",
+      "lots": 2
+    },
+    {
+      "term": "Digital asset short-term",
+      "box": "G",
+      "proceeds": "5500.00",
+      "cost": "4100.00",
+      "code": "",
+      "wash": "0",
+      "gain": "1400.00",
+      "lots": 1
+    },
+    {
+      "term": "Digital asset long-term",
+      "box": "J",
+      "proceeds": "0",
+      "cost": "0",
+      "code": "",
+      "wash": "0",
+      "gain": "0",
+      "lots": 0
+    }
+  ],
+  "noncovered": {
+    "B": {
+      "lots": 2,
+      "proceeds": "4165.00"
+    },
+    "E": {
+      "lots": 1,
+      "proceeds": "4200.00"
+    },
+    "X": {
+      "lots": 1,
+      "proceeds": "2600.00"
+    },
+    "H": {
+      "lots": 1,
+      "proceeds": "2100.00"
+    }
+  },
+  "income": {
+    "DIV 1a": "535.80",
+    "DIV 1b": "290.70",
+    "DIV 2a": "35.00",
+    "DIV 7": "4.10",
+    "INT 1": "88.12",
+    "INT 3": "120.00",
+    "MISC 8": "15.75",
+    "OID 8": "210.00"
+  },
+  "state_treasury_subtraction": "433.31",
+  "flags": [
+    {
+      "category": "Wash sales",
+      "issue": "Broker tracks only same-account, identical-CUSIP wash sales. Ask about purchases in IRAs (loss permanently disallowed), spouse's accounts, other brokers and options on the same securities.",
+      "amount": "850.00",
+      "status": "Open"
+    },
+    {
+      "category": "Wash sales",
+      "issue": "1 wash line(s) have a disallowed amount larger than the line's own loss (broker aggregation). Reported as the broker computed.",
+      "amount": "350.00",
+      "status": "Open"
+    },
+    {
+      "category": "Unknown term",
+      "issue": "1 unknown-term lot(s): holding period AND basis must come from the client before entry.",
+      "amount": "2600.00",
+      "status": "Open"
+    },
+    {
+      "category": "Noncovered basis",
+      "issue": "Box B: 1 lot(s) with no basis on the 1099; client must supply basis and date acquired.",
+      "amount": "4125.00",
+      "status": "Open"
+    },
+    {
+      "category": "Noncovered",
+      "issue": "Box B: 2 lot(s) basis not reported to IRS: enter each lot individually and verify basis with the client.",
+      "amount": "4165.00",
+      "status": "Open"
+    },
+    {
+      "category": "Noncovered",
+      "issue": "Box E: 1 lot(s) basis not reported to IRS: enter each lot individually and verify basis with the client.",
+      "amount": "4200.00",
+      "status": "Open"
+    },
+    {
+      "category": "Noncovered basis",
+      "issue": "Box H: 1 lot(s) with no basis on the 1099; client must supply basis and date acquired.",
+      "amount": "2100.00",
+      "status": "Open"
+    },
+    {
+      "category": "Noncovered",
+      "issue": "Box H: 1 lot(s) basis not reported to IRS: enter each lot individually and verify basis with the client.",
+      "amount": "2100.00",
+      "status": "Open"
+    },
+    {
+      "category": "Digital assets",
+      "issue": "Noncovered 1099-DA lots (Box H/K): basis comes from broker records only; request support.",
+      "amount": null,
+      "status": "Open"
+    },
+    {
+      "category": "Digital assets",
+      "issue": "Digital asset transactions present: answer YES to the Form 1040 digital asset question.",
+      "amount": null,
+      "status": "Open"
+    },
+    {
+      "category": "Zero basis",
+      "issue": "ABC CORP CVR: CVR with zero/no basis; confirm basis allocation with the client.",
+      "amount": "40.00",
+      "status": "Open"
+    },
+    {
+      "category": "Substitute payments",
+      "issue": "1099-MISC box 8 substitute payments are ordinary income, not qualified dividends.",
+      "amount": "15.75",
+      "status": "Open"
+    },
+    {
+      "category": "Qualified dividends",
+      "issue": "Holding-period screen: lots held 60 days or less straddle qualified dividend payments (APPLE INC, SPDR S&P 500 ETF TRUST). Ex-date is not on the 1099; ask whether other shares were held through year-end.",
+      "amount": "80.70",
+      "status": "Open"
+    },
+    {
+      "category": "Section 1256",
+      "issue": "Section 1256 aggregate profit/(loss) goes to Form 6781 (60/40), not Form 8949.",
+      "amount": "-1250.00",
+      "status": "Open"
+    },
+    {
+      "category": "Margin interest",
+      "issue": "Margin interest goes to Form 4952: check net investment income and ask whether the client elects to treat qualified dividends/gains as investment income.",
+      "amount": "312.45",
+      "status": "Open"
+    },
+    {
+      "category": "Fees",
+      "issue": "ADR and other investment fees are not deductible.",
+      "amount": "6.00",
+      "status": "Open"
+    },
+    {
+      "category": "State",
+      "issue": "U.S. Treasury / direct federal obligation interest is a state subtraction in most states (including Colorado).",
+      "amount": "433.31",
+      "status": "Open"
+    },
+    {
+      "category": "Completeness",
+      "issue": "Confirm there are no separate joint, retirement or other-broker 1099s for this client.",
+      "amount": null,
+      "status": "Open"
+    }
+  ],
+  "validation": {
+    "checks": 53,
+    "failures": [],
+    "warnings": []
+  },
+  "headline": "Sample Client 2025 Example Brokerage, payer EIN 12-3456789. Short-term (Box A): proceeds 31,200.00, cost 32,500.00, wash 850.00 (code W), gain/(loss) (450.00). Short-term - Ordinary (Box A): proceeds 10,000.00, cost 9,790.00, wash 0.00, gain/(loss) 210.00. Long-term (Box D): proceeds 27,400.00, cost 13,550.00, wash 0.00, gain/(loss) 13,850.00. Digital asset short-term (Box G): proceeds 5,500.00, cost 4,100.00, wash 0.00, gain/(loss) 1,400.00. Digital asset long-term (Box J): none reported. Enter individually: Box B: 2 lot(s), proceeds 4,165.00; Box E: 1 lot(s), proceeds 4,200.00; Box X: 1 lot(s), proceeds 2,600.00; Box H: 1 lot(s), proceeds 2,100.00. Income: DIV 1a 535.80, DIV 1b 290.70, DIV 2a 35.00, DIV 7 4.10, INT 1 88.12, INT 3 120.00, MISC 8 15.75, OID 8 210.00. State Treasury subtraction 433.31. Tie-out: all 74 check cells = 0 (ALL TIED). 18 open flag(s).",
+  "workbook_checks": {
+    "recalculated": true,
+    "recalc_error": "",
+    "formula_errors": [],
+    "check_cells": 74,
+    "failures": [],
+    "status": "ALL TIED"
+  }
+}
