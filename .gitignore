@@ -6,3 +6,10 @@ out/
 build/
 dist/
 .venv/
+# drake_entry runtime output (contains taxpayer data - never commit)
+drake_entry/logs/
+drake_entry/evidence/
+drake_entry/tracking/
+drake_entry/workpapers/
+drake_entry/input/*_backup_*.xlsx
+fake_state.json*

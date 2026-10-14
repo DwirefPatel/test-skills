@@ -1,0 +1,45 @@
+{
+  "_readme": "Global settings. Form-specific settings (screen code, tab order, field map) live in forms/<FORM>.json.",
+  "tax_year": 2025,
+  "ss_wage_base": {"2024": 168600, "2025": 176100, "2026": 184500},
+  "preparer_initials": "",
+  "forms_enabled": ["W2"],
+  "paths": {
+    "input": "input/Client_Input.xlsx",
+    "audit_log": "logs/audit_log.jsonl",
+    "tracker": "tracking/Entry_Tracker.xlsx",
+    "screenshots": "evidence/screenshots"
+  },
+  "window_title_must_contain": "Drake",
+  "keys": {
+    "open_screen": "enter",
+    "next_field": "tab",
+    "new_instance": "pagedown",
+    "exit_screen": "esc",
+    "field_start": "home",
+    "select_to_end": ["shift", "end"],
+    "clear": "delete",
+    "copy": ["ctrl", "c"]
+  },
+  "delays": {
+    "countdown_seconds": 5,
+    "between_keys": 0.03,
+    "after_field": 0.08,
+    "after_open_screen": 1.5,
+    "after_new_instance": 1.2,
+    "after_exit": 1.0,
+    "after_copy": 0.12
+  },
+  "entry": {
+    "_comment": "clear_before_type replaces anything Drake pre-fills (e.g. from its EIN database) with the source value, and notes it in the audit trail.",
+    "clear_before_type": true,
+    "prompt_tieout": true
+  },
+  "verify": {
+    "_comment": "readback_method: auto (UI Automation, then clipboard), uia, or clipboard.",
+    "readback": true,
+    "readback_method": "auto",
+    "screenshot": true
+  },
+  "tracker": {"show_blank_fields": false}
+}
