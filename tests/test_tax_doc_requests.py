@@ -21,12 +21,30 @@ def make_xlsx(tmp_path, rows):
     return p
 
 
-def test_load_sample_and_names():
-    clients = t.load_clients(SAMPLE)
+def test_load_drake_sample():
+    clients = t.load_clients(SAMPLE)  # Individual Clients tab; example row 2 skipped
     assert [c.display_name for c in clients] == [
-        "Jane & John Sample", "Alex Example", "Priya Demo & Ravi Test"]
-    assert [c.is_new for c in clients] == [False, True, True]
-    assert [c.is_mfj for c in clients] == [True, False, True]
+        "Alex Example", "Priya Demo & Ravi Test", "Mary & Pat O'Brien"]
+    assert [c.is_new for c in clients] == [True, True, False]  # blank type -> returning
+    assert [c.is_mfj for c in clients] == [False, True, True]
+    priya, mary = clients[1], clients[2]
+    assert (priya.email, priya.spouse_email) == ("priya.demo@example.com", "ravi.test@example.com")
+    # No taxpayer email: draft goes to the spouse and greets the spouse.
+    assert (mary.email, mary.spouse_email, mary.greeting_name) == \
+        ("pat.obrien@example.com", "", "Pat")
+
+
+def test_drake_template_header_maps_and_example_row_skipped():
+    template = SAMPLE.parent / "templates" / "Drake_Client_Contact_Template.xlsx"
+    assert t.load_clients(template) == []
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ("JANE", "Jane"), ("O'BRIEN", "O'Brien"), ("SMITH-JONES", "Smith-Jones"),
+    ("McDonald", "McDonald"), ("van der berg", "Van Der Berg"),
+])
+def test_name_case(raw, expected):
+    assert t.name_case(raw) == expected
 
 
 @pytest.mark.parametrize("full,expected", [
@@ -122,19 +140,20 @@ class RecordingDropbox:
 def test_process_skips_done_and_logs_errors(tmp_path):
     clients = t.load_clients(SAMPLE)
     clients.append(t.Client(row=9, email="not-an-email", first_name="Bad"))
+    clients.append(t.Client(row=10, email="priya.demo@example.com", first_name="Dup"))
     dbx, ol = RecordingDropbox(), RecordingOutlook()
     recs = t.process(clients, dbx, ol, SETTINGS, "/File requests", [],
                      done={"alex@example.com"}, log=lambda *_: None)
-    assert [d[2] for d in ol.drafts] == ["Jane & John Sample - 2025 Tax Documents",
-                                         "Priya Demo & Ravi Test - 2025 Tax Documents"]
-    assert ol.drafts[0][1] == ["john.sample@example.com"]  # spouse CC'd
-    assert dbx.calls[0] == ("Jane & John Sample - 2025 Tax Documents",
-                            "/File requests/Jane & John Sample")
-    assert [r[9] for r in recs] == ["Done", "Done", "Error"]
+    assert [d[2] for d in ol.drafts] == ["Priya Demo & Ravi Test - 2025 Tax Documents",
+                                         "Mary & Pat O'Brien - 2025 Tax Documents"]
+    assert ol.drafts[0][1] == ["ravi.test@example.com"]  # spouse CC'd
+    assert dbx.calls[0] == ("Priya Demo & Ravi Test - 2025 Tax Documents",
+                            "/File requests/Priya Demo & Ravi Test")
+    assert [r[9] for r in recs] == ["Done", "Done", "Error", "Error"]
 
     log = tmp_path / "log.xlsx"
     t.append_log(log, recs)
-    assert t.load_done(log) == {"jane.sample@example.com", "priya.demo@example.com"}
+    assert t.load_done(log) == {"priya.demo@example.com", "pat.obrien@example.com"}
 
 
 def test_dry_run_end_to_end(tmp_path):
@@ -144,6 +163,15 @@ def test_dry_run_end_to_end(tmp_path):
     previews = sorted((tmp_path / "c_previews").glob("*.html"))
     assert len(previews) == 3
     assert not (tmp_path / "c_requests_log.xlsx").exists()
+
+
+def test_new_flag_marks_client_new(tmp_path, capsys):
+    clients = tmp_path / "c.xlsx"
+    clients.write_bytes(SAMPLE.read_bytes())
+    assert t.main(["run", str(clients), "--tax-year", "2025", "--dry-run",
+                   "--new", "PAT.OBRIEN@example.com"]) == 0
+    assert "3 new, 0 returning" in capsys.readouterr().out
+    assert t.main(["run", str(clients), "--dry-run", "--new", "nobody@example.com"]) == 1
 
 
 def test_mfj_from_spouse_columns_without_filing_status(tmp_path):

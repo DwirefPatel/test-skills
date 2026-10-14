@@ -15,23 +15,26 @@
 4. Logs each row in `<clients>_requests_log.xlsx` with the link, its status and any error.
    A re-run skips rows already marked Done. Use `--force` to redo them.
 
-## Client list
+## Client list (Drake Client Contact List)
 
-Column names are matched loosely (case, spaces and dashes don't matter). See `sample_clients.xlsx`.
+Use `templates/Drake_Client_Contact_Template.xlsx`, rebuilt from the Drake "Client Contact
+List" CSV export as described in its Notes tab. `sample_clients.xlsx` is a filled-in example.
 
-| Field | Accepted headers | Notes |
-|---|---|---|
-| email (required) | Email, Email Address, E-mail | Several addresses can be separated with `;` |
-| first name (required*) | First Name, Taxpayer First Name | |
-| last name | Last Name | |
-| spouse first / last name | Spouse First Name, Spouse Last Name | Spouse last name defaults to the client's |
-| spouse email | Spouse Email | CC'd on the draft |
-| filing status | Filing Status | Recommended. `MFJ` / `Married Filing Jointly` means MFJ. Any other value (Single, MFS, HOH) is not MFJ, even if a spouse is listed. When the cell is blank, a spouse name or spouse email means MFJ |
-| client type | Client Type, New/Returning | `New` or `Returning`. If it's blank, the row is treated as **returning**. Use `--default-new` to flip that |
-| full name | Name, Client Name | *Can replace the first and last name columns. `Tejas & Anita Girase`, `Tejas Girase & Anita Patel` and `Girase, Tejas` are all understood |
+- The script reads the **Individual Clients** tab. **Business Clients** is ignored, because these
+  requests are for personal returns.
+- The template's example row is skipped automatically, because its notes say "EXAMPLE ROW".
+- **To:** Taxpayer Email. **CC:** Spouse Email. If Taxpayer Email is blank, the draft goes to
+  the spouse instead and greets the spouse.
+- **MFJ:** a client with a Spouse First Name or Spouse Email is treated as MFJ.
+- **Names:** Drake's capitals (`JANE SAMPLE`) become `Jane Sample` in the email, subject and folder.
+- **New vs returning:** I added one column to the template, **N: Client Type (New / Returning)**,
+  with a New/Returning dropdown. A blank cell means returning. You can also skip the column and
+  mark new clients on the command line: `--new client@email.com --new other@email.com`.
+- If two rows share an email, only the first gets a draft and the second is logged as skipped.
+- Rows with no email at all are logged as errors. They match the Still Missing tab.
 
-If your headers are different, map them yourself, for example
-`--column email="Primary Email" --column client_type="Prior Client?"`.
+Other spreadsheets also work. Headers are matched loosely, and `--column FIELD=HEADER` maps
+anything unusual. Use `--sheet` to pick a different tab.
 
 ## One-time setup (Windows)
 
@@ -66,13 +69,13 @@ space, add `--team-space` to the `run` commands.
 
 ```powershell
 # 1. Preview only: no Dropbox or Outlook calls. Writes HTML previews next to the list.
-python send_tax_requests.py run "2025 Clients.xlsx" --tax-year 2025 --dry-run
+python send_tax_requests.py run "Drake Client Contact List.xlsx" --tax-year 2025 --dry-run
 
 # 2. Test on one client, then check the draft in Outlook
-python send_tax_requests.py run "2025 Clients.xlsx" --tax-year 2025 --only tejasgirasr@gmail.com
+python send_tax_requests.py run "Drake Client Contact List.xlsx" --tax-year 2025 --only tejasgirasr@gmail.com
 
 # 3. Everyone
-python send_tax_requests.py run "2025 Clients.xlsx" --tax-year 2025
+python send_tax_requests.py run "Drake Client Contact List.xlsx" --tax-year 2025
 ```
 
 Other useful options: `--limit 10` for a test batch, `--deadline 2026-04-01` to set an upload

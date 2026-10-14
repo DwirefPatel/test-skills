@@ -49,10 +49,14 @@ COLUMN_ALIASES: dict[str, list[str]] = {
     "spouse_last_name": ["spouse last name", "sp last name"],
     "spouse_email": ["spouse email", "spouse email address", "cc"],
     "filing_status": ["filing status", "fs"],
-    "client_type": ["client type", "new or returning", "new/returning", "client status", "type",
-                    "new client"],
+    "client_type": ["client type", "client type new returning", "new or returning",
+                    "new/returning", "client status", "type", "new client"],
     "display_name": ["display name", "request name", "client name", "name"],
+    "notes": ["notes", "found in outlook source notes"],
 }
+# Drake Client Contact List workbook: the individual clients tab (Business Clients is ignored).
+DRAKE_SHEET = "Individual Clients"
+EXAMPLE_MARKER = "example row"
 REQUIRED = ("email", "first_name")
 
 MFJ_VALUES = {"mfj", "married filing jointly", "married filing joint", "married jointly",
@@ -78,6 +82,7 @@ class Client:
     filing_status: str = ""
     is_new: bool = False
     display_name_override: str = ""
+    greeting_name: str = ""
     warnings: list[str] = field(default_factory=list)
 
     @property
@@ -104,7 +109,21 @@ class Client:
 
 
 def _norm(text: object) -> str:
-    return re.sub(r"[\s_\-/]+", " ", str(text or "")).strip().lower()
+    return re.sub(r"[\s_\-/()]+", " ", str(text or "")).strip().lower()
+
+
+def name_case(name: str) -> str:
+    """Drake exports names in capitals: 'JANE' -> 'Jane', "O'BRIEN" -> "O'Brien".
+
+    Names already in mixed case ('McDonald') are left alone.
+    """
+    if name and (name.isupper() or name.islower()):
+        return re.sub(r"[A-Za-z]+('[A-Za-z]+)?",
+                      lambda m: m.group(0)[0].upper() + m.group(0)[1:].lower()
+                      if "'" not in m.group(0) else "'".join(
+                          x[:1].upper() + x[1:].lower() for x in m.group(0).split("'")),
+                      name)
+    return name
 
 
 def _cell(value: object) -> str:
@@ -177,7 +196,12 @@ def load_clients(path: Path, sheet: str | None = None, header_row: int | None = 
     import openpyxl
 
     wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
-    ws = wb[sheet] if sheet else wb.worksheets[0]
+    if sheet:
+        ws = wb[sheet]
+    elif DRAKE_SHEET in wb.sheetnames:
+        ws = wb[DRAKE_SHEET]
+    else:
+        ws = wb.worksheets[0]
     rows = list(ws.iter_rows(values_only=True))
     wb.close()
 
@@ -201,23 +225,33 @@ def load_clients(path: Path, sheet: str | None = None, header_row: int | None = 
         email, first, full = get("email"), get("first_name"), get("display_name")
         if not email and not first and not full:
             continue  # blank row
+        if EXAMPLE_MARKER in get("notes").lower():
+            continue  # the template's fictional example row
         last, sp_first, sp_last = get("last_name"), get("spouse_first_name"), \
             get("spouse_last_name")
         if not first and full:
             first, last2, sp_first2, sp_last2 = split_full_name(full)
             last, sp_first, sp_last = last or last2, sp_first or sp_first2, sp_last or sp_last2
         is_new, warn = parse_client_type(get("client_type"), default_new)
+        first, last = name_case(first), name_case(last)
+        sp_first, sp_last = name_case(sp_first), name_case(sp_last)
+        sp_email = get("spouse_email").lower()
+        email = email.lower()
+        if sp_email and sp_email == email:
+            sp_email = ""  # same address on both; no point CC'ing it
         c = Client(
             row=offset, email=email, first_name=first, last_name=last,
             spouse_first_name=sp_first, spouse_last_name=sp_last,
-            spouse_email=get("spouse_email"), filing_status=get("filing_status"),
+            spouse_email=sp_email, filing_status=get("filing_status"),
             is_new=is_new, display_name_override=full if "first_name" in mapping else "",
         )
+        if not email and sp_email:
+            # No taxpayer email: address the draft to the spouse instead.
+            c.email, c.spouse_email = sp_email, ""
+            c.greeting_name = sp_first
+            c.warnings.append("no taxpayer email; draft addressed to the spouse")
         if warn:
             c.warnings.append(warn)
-        if "client_type" not in mapping:
-            c.warnings.append("no client type column; treated as "
-                              f"{'new' if default_new else 'returning'}")
         clients.append(c)
     return clients
 
@@ -287,7 +321,7 @@ def build_email(c: Client, link: str, s: EmailSettings) -> tuple[str, str]:
     e = html.escape
     p = '<p style="margin:0 0 12px 0">{}</p>'.format
 
-    parts = [p(f"Hi {e(c.first_name.strip())},")]
+    parts = [p(f"Hi {e((c.greeting_name or c.first_name).strip())},")]
     if s.attach_checklist:
         parts.append(p("Please find the attached checklist for documents upload &amp; the "
                        "questionnaire."))
@@ -552,6 +586,7 @@ def process(clients: list[Client], dropbox_client, outlook, settings: EmailSetti
             deadline: datetime | None = None, cc_spouse: bool = True,
             log=print) -> list[list]:
     records = []
+    seen: set[str] = set()
     for c in clients:
         stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
         title = request_title(c, settings.tax_year) if c.first_name else ""
@@ -561,6 +596,13 @@ def process(clients: list[Client], dropbox_client, outlook, settings: EmailSetti
         if c.email.strip().lower() in done:
             log(f"  row {c.row}: {c.display_name} - already done, skipped")
             continue
+        key = c.email.strip().lower()
+        if key and key in seen:
+            msg = "same email as an earlier row; skipped so the client gets one draft"
+            log(f"  row {c.row}: SKIPPED - {msg}")
+            records.append(base + ["", "", "", "Error", msg, stamp])
+            continue
+        seen.add(key)
         err = validate_client(c)
         if err:
             log(f"  row {c.row}: SKIPPED - {err}")
@@ -613,6 +655,9 @@ def parse_args(argv=None) -> argparse.Namespace:
                           f"Fields: {', '.join(COLUMN_ALIASES)}")
     run.add_argument("--default-new", action="store_true",
                      help="treat rows with a blank client type as NEW (default: returning)")
+    run.add_argument("--new", action="append", default=[], metavar="EMAIL",
+                     help="mark this client as NEW (repeatable); everyone else follows the "
+                          "Client Type column, or is returning when it's blank")
     run.add_argument("--only", action="append", default=[], metavar="EMAIL",
                      help="process only this email (repeatable)")
     run.add_argument("--limit", type=int, help="process at most N rows (for a test batch)")
@@ -676,6 +721,14 @@ def main(argv=None) -> int:
 
     clients = load_clients(args.clients, args.sheet, args.header_row, overrides,
                            args.default_new)
+    new_emails = {e.strip().lower() for e in args.new}
+    for c in clients:
+        if c.email in new_emails:
+            c.is_new = True
+    unknown = new_emails - {c.email for c in clients}
+    if unknown:
+        print(f"--new email(s) not in the list: {', '.join(sorted(unknown))}")
+        return 1
     if args.only:
         wanted = {e.lower() for e in args.only}
         clients = [c for c in clients if c.email.strip().lower() in wanted]
