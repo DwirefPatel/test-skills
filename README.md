@@ -8,6 +8,8 @@ headline and a machine-readable JSON report.
 It is built as a self-contained package with a stable API so it can be one module of a
 larger tax-prep build.
 
+**Drake data entry.** [`drake_entry/`](drake_entry/README.md) is the Drake Tax keyboard-automation tool. It uses this package for folder intake: `python run.py intake <client folder>` classifies every document, turns brokerage 1099s into tied-out workpapers, stages the Schedule D (8949) and Schedule B (DIV/INT/OID/99M) entries plus W-2s, and then types them into Drake with field-by-field readback and an audit trail.
+
 > Preparer workpaper, not tax advice. Recipient TIN and account numbers are kept as last 4
 > only; payer EINs are shown in full.
 

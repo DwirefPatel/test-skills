@@ -1,0 +1,21 @@
+{
+  "_readme": "Drake 99M screen setup. field_order = Tab order on the screen (use __SKIP__ to tab past a field). The default order is a starting point, NOT yet confirmed on a real Drake screen: run 'python run.py calibrate --form 99M' on a TEST return and fix it before real use. Fields not listed here are kept in the input workbook for reference but never typed. field_ids/focus_check are written by: python run.py map-fields --form 99M. keys overrides settings.json keys for this screen only.",
+  "screen_code": "99M",
+  "field_order": [
+    "ts",
+    "payer_ein",
+    "payer_name",
+    "box2",
+    "box3",
+    "box4",
+    "box8",
+    "box15_state_wh",
+    "box16_state"
+  ],
+  "label_overrides": {},
+  "keys": {
+    "open_existing_extra": []
+  },
+  "focus_check": false,
+  "field_ids": {}
+}

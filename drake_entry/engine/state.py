@@ -10,6 +10,7 @@ class State:
         self.runs = OrderedDict()
         self.instances = OrderedDict()   # (client, form, pos) -> instance dict
         self.corrections, self.tieouts, self.validations, self.halts, self.skipped = [], [], [], [], []
+        self.intake = OrderedDict()      # (client, file) -> latest intake_document record
         for ev in events:
             self._apply(ev)
 
@@ -63,6 +64,8 @@ class State:
             self.halts.append({**d, "ts": ts, "run_id": rid})
         elif e == "skipped":
             self.skipped.append({**d, "ts": ts, "run_id": rid})
+        elif e == "intake_document":
+            self.intake[(d["client"], d["file"])] = {**d, "ts": ts, "run_id": rid, "by": self._by(rid)}
 
     def instances_for(self, client, form):
         return sorted((i for (c, f, _), i in self.instances.items() if c == client and f == form),

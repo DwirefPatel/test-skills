@@ -1,0 +1,20 @@
+                          2025  Form W-2 Wage and Tax Statement                Copy B - To Be Filed With Employee's FEDERAL Tax Return
+a Employee's social security number      OMB No. 1545-0008
+  222-33-4444
+b Employer identification number (EIN)                   1 Wages, tips, other compensation      2 Federal income tax withheld
+  84-1234567                                                       52000.00                              4800.00
+c Employer's name, address, and ZIP code                 3 Social security wages                4 Social security tax withheld
+  FRONT RANGE HOTELS LLC                                           55000.00                              3410.00
+  1600 BROADWAY                                          5 Medicare wages and tips              6 Medicare tax withheld
+  DENVER, CO 80202                                                 55000.00                               797.50
+                                                         7 Social security tips                 8 Allocated tips
+
+d Control number                                         9                                      10 Dependent care benefits
+
+e Employee's first name and initial   Last name          11 Nonqualified plans                  12a See instructions for box 12
+  PAT INTAKE                                                                                       D      3000.00
+f Employee's address and ZIP code                        13 Statutory  Retirement  Third-party  12b
+                                                            employee   plan        sick pay
+                                                                       X
+15 State  Employer's state ID number    16 State wages, tips, etc.   17 State income tax   18 Local wages   19 Local income tax
+   CO     12345678                         52000.00                      2288.00

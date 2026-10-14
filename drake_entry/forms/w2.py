@@ -55,6 +55,8 @@ class W2Form(FormDef):
         Field("box18_local_wages", "18 - Local wages, tips, etc.", "money"),
         Field("box19_local_tax", "19 - Local income tax", "money"),
         Field("box20_locality", "20 - Locality name", "text"),
+        # reference only - not typed (not in field_order)
+        Field("source_doc", "Source (set by intake; the W-2 file it came from)", "text"),
     ]
 
     def rules(self, row, settings):

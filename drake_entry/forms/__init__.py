@@ -8,10 +8,20 @@ Form registry. To add a form:
 """
 from pathlib import Path
 
+from .div1099 import DIVForm
+from .f8949 import F8949Form
+from .int1099 import INTForm
+from .misc1099 import MISCForm
+from .oid1099 import OIDForm
 from .w2 import W2Form
 
 REGISTRY = {
     "W2": (W2Form, "W2.json"),
+    "8949": (F8949Form, "8949.json"),
+    "DIV": (DIVForm, "DIV.json"),
+    "INT": (INTForm, "INT.json"),
+    "OID": (OIDForm, "OID.json"),
+    "99M": (MISCForm, "99M.json"),
 }
 
 

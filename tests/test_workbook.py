@@ -62,3 +62,16 @@ def test_cli_build_no_recalc(tmp_path, capsys):
     assert code == 0
     assert (tmp_path / "r.json").exists()
     assert "Workbook:" in capsys.readouterr().out
+
+
+@needs_soffice
+def test_income_only_package_ties(tmp_path):
+    """A bank 1099-INT has no sales: empty lot/wash tables must not create circular totals."""
+    pkg = package_from_dict({
+        "client": "Bank Only", "tax_year": 2025, "broker": "First National Bank",
+        "payers": [{"name": "First National Bank N.A.", "ein": "55-1234567", "forms": ["1099-INT"]}],
+        "form_totals": [{"form": "INT", "box": "1", "amount": "150.00"}],
+    })
+    result = process_package(pkg, tmp_path)
+    assert result.verify.recalc.formula_errors == []
+    assert result.verify.status == "ALL TIED", result.headline

@@ -1,14 +1,26 @@
 {
   "_readme": "Global settings. Form-specific settings (screen code, tab order, field map) live in forms/<FORM>.json.",
   "tax_year": 2025,
-  "ss_wage_base": {"2024": 168600, "2025": 176100, "2026": 184500},
+  "ss_wage_base": {
+    "2024": 168600,
+    "2025": 176100,
+    "2026": 184500
+  },
   "preparer_initials": "",
-  "forms_enabled": ["W2"],
+  "forms_enabled": [
+    "W2",
+    "8949",
+    "DIV",
+    "INT",
+    "OID",
+    "99M"
+  ],
   "paths": {
     "input": "input/Client_Input.xlsx",
     "audit_log": "logs/audit_log.jsonl",
     "tracker": "tracking/Entry_Tracker.xlsx",
-    "screenshots": "evidence/screenshots"
+    "screenshots": "evidence/screenshots",
+    "workpapers": "workpapers"
   },
   "window_title_must_contain": "Drake",
   "keys": {
@@ -17,9 +29,15 @@
     "new_instance": "pagedown",
     "exit_screen": "esc",
     "field_start": "home",
-    "select_to_end": ["shift", "end"],
+    "select_to_end": [
+      "shift",
+      "end"
+    ],
     "clear": "delete",
-    "copy": ["ctrl", "c"]
+    "copy": [
+      "ctrl",
+      "c"
+    ]
   },
   "delays": {
     "countdown_seconds": 5,
@@ -41,5 +59,12 @@
     "readback_method": "auto",
     "screenshot": true
   },
-  "tracker": {"show_blank_fields": false}
+  "tracker": {
+    "show_blank_fields": false
+  },
+  "import_1099": {
+    "_comment": "import-1099: require_recalc refuses the import when LibreOffice can't recalculate the workpaper (set false on a PC without LibreOffice; the Python tie-outs still gate the import).",
+    "require_recalc": false,
+    "default_ts": "T"
+  }
 }

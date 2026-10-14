@@ -75,31 +75,38 @@ def make_template(path, forms, examples=None):
         c.font = Font(name="Arial", bold=bold, size=12 if i == 1 else 10)
     info.column_dimensions["A"].width = 110
 
+    for form in forms.values():
+        write_form_sheet(wb, form, examples.get(form.code, {}))
+    wb.save(path)
+
+
+def write_form_sheet(wb, form, example=None):
+    """Add one form's tab (header, field names, example row, text-formatted input area)."""
+    example = example or {}
     head_fill = PatternFill("solid", fgColor="1F4E78")
     yellow = PatternFill("solid", fgColor="FFF2CC")
-    for form in forms.values():
-        ws = wb.create_sheet(form.sheet)
-        cols = COMMON + list(form.fields)
-        for j, f in enumerate(cols, 1):
-            h = ws.cell(HEADER_ROW, j, f.label)
-            h.font = Font(name="Arial", bold=True, color="FFFFFF", size=9)
-            h.fill = head_fill
-            h.alignment = Alignment(wrap_text=True, vertical="top")
-            n = ws.cell(NAME_ROW, j, f.name)
-            n.font = Font(name="Arial", size=8, color="808080")
-            if f.help:
-                h.comment = Comment(f.help, "Template")
-            ex = ws.cell(EXAMPLE_ROW, j, examples.get(form.code, {}).get(f.name, ""))
-            ex.font = Font(name="Arial", italic=True, color="808080")
-            ex.number_format = "@"
-            for i in range(EXAMPLE_ROW + 1, EXAMPLE_ROW + 301):
-                c = ws.cell(i, j)
-                c.number_format = "@"
-                c.font = Font(name="Arial", size=10)
-                if i <= EXAMPLE_ROW + 25:
-                    c.fill = yellow
-            ws.column_dimensions[h.column_letter].width = max(13, min(30, len(f.name) + 3))
-        ws.cell(EXAMPLE_ROW, 1).value = "EXAMPLE-" + str(ws.cell(EXAMPLE_ROW, 1).value or "")
-        ws.row_dimensions[HEADER_ROW].height = 48
-        ws.freeze_panes = ws.cell(EXAMPLE_ROW, 4)
-    wb.save(path)
+    ws = wb.create_sheet(form.sheet)
+    cols = COMMON + list(form.fields)
+    for j, f in enumerate(cols, 1):
+        h = ws.cell(HEADER_ROW, j, f.label)
+        h.font = Font(name="Arial", bold=True, color="FFFFFF", size=9)
+        h.fill = head_fill
+        h.alignment = Alignment(wrap_text=True, vertical="top")
+        n = ws.cell(NAME_ROW, j, f.name)
+        n.font = Font(name="Arial", size=8, color="808080")
+        if f.help:
+            h.comment = Comment(f.help, "Template")
+        ex = ws.cell(EXAMPLE_ROW, j, example.get(f.name, ""))
+        ex.font = Font(name="Arial", italic=True, color="808080")
+        ex.number_format = "@"
+        for i in range(EXAMPLE_ROW + 1, EXAMPLE_ROW + 301):
+            c = ws.cell(i, j)
+            c.number_format = "@"
+            c.font = Font(name="Arial", size=10)
+            if i <= EXAMPLE_ROW + 25:
+                c.fill = yellow
+        ws.column_dimensions[h.column_letter].width = max(13, min(30, len(f.name) + 3))
+    ws.cell(EXAMPLE_ROW, 1).value = "EXAMPLE-" + str(ws.cell(EXAMPLE_ROW, 1).value or "")
+    ws.row_dimensions[HEADER_ROW].height = 48
+    ws.freeze_panes = ws.cell(EXAMPLE_ROW, 4)
+    return ws

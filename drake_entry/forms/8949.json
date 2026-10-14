@@ -1,0 +1,22 @@
+{
+  "_readme": "Drake 8949 screen setup. field_order = Tab order on the screen (use __SKIP__ to tab past a field). The default order is a starting point, NOT yet confirmed on a real Drake screen: run 'python run.py calibrate --form 8949' on a TEST return and fix it before real use. Fields not listed here are kept in the input workbook for reference but never typed. field_ids/focus_check are written by: python run.py map-fields --form 8949. keys overrides settings.json keys for this screen only.",
+  "screen_code": "8949",
+  "field_order": [
+    "ts",
+    "description",
+    "date_acquired",
+    "date_sold",
+    "proceeds",
+    "cost",
+    "box_8949",
+    "adj_code",
+    "adj_amount",
+    "fed_wh"
+  ],
+  "label_overrides": {},
+  "keys": {
+    "open_existing_extra": []
+  },
+  "focus_check": false,
+  "field_ids": {}
+}

@@ -136,6 +136,7 @@ def build_tracker(session):
                                    "(run verify for this client to do it)", "", "", "", ""))
     _corrections_sheet(cor_ws, state)
     _validation_exceptions(state, exceptions)
+    _intake_exceptions(state, exceptions)
     _exceptions_sheet(exc_ws, exceptions)
     _run_log_sheet(run_ws, state)
     _integrity_sheet(aud_ws, ok, n_events, problem, events, session)
@@ -323,6 +324,30 @@ def _validation_exceptions(state, exceptions):
         if v["run_id"] == last and v.get("level") == "warning":
             exceptions.append(("Medium", "", "", "", "Input validation", "Warning accepted at entry: " + v["message"],
                                "", "", "", v["ts"]))
+
+
+INTAKE_DONE = ("Prepared", "Duplicate file - skipped", "Superseded by CORRECTED", "Already prepared - skipped")
+INTAKE_INFO = ("Recognized - not automated", "Unrecognized")
+
+
+def _intake_exceptions(state, exceptions):
+    """Documents from folder intake that still need a person: not prepared, review, manual entries."""
+    for (ck, fname), d in state.intake.items():
+        status = d.get("status", "")
+        if status not in INTAKE_DONE:
+            sev = "Medium" if status in INTAKE_INFO else "High"
+            exceptions.append((sev, ck, d.get("category", ""), fname, "Document intake",
+                               f"{status}: {d.get('detail', '')}"[:300], "", "", "", d["ts"]))
+            continue
+        if status != "Prepared":
+            continue
+        for note in d.get("review", []):
+            exceptions.append(("Medium", ck, d.get("category", ""), fname, "Review before entry", note,
+                               "", "", "", d["ts"]))
+        for item, amount, where in d.get("manual", []):
+            amt = "" if amount is None else f"{amount:,.2f}"
+            exceptions.append(("Medium", ck, d.get("category", ""), fname, item,
+                               f"Enter manually: {where}", amt, "", "", d["ts"]))
 
 
 def _exceptions_sheet(ws, exceptions):

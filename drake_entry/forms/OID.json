@@ -1,0 +1,27 @@
+{
+  "_readme": "Drake OID screen setup. field_order = Tab order on the screen (use __SKIP__ to tab past a field). The default order is a starting point, NOT yet confirmed on a real Drake screen: run 'python run.py calibrate --form OID' on a TEST return and fix it before real use. Fields not listed here are kept in the input workbook for reference but never typed. field_ids/focus_check are written by: python run.py map-fields --form OID. keys overrides settings.json keys for this screen only.",
+  "screen_code": "OID",
+  "field_order": [
+    "ts",
+    "payer_ein",
+    "payer_name",
+    "box1",
+    "box2",
+    "box3",
+    "box4",
+    "box5",
+    "box6",
+    "box8",
+    "box9",
+    "box10",
+    "box11",
+    "box12_state",
+    "box14_state_wh"
+  ],
+  "label_overrides": {},
+  "keys": {
+    "open_existing_extra": []
+  },
+  "focus_check": false,
+  "field_ids": {}
+}

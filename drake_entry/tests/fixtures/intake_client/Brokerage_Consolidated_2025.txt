@@ -1,0 +1,23 @@
+EXAMPLE BROKERAGE LLC                              2025 FORM 1099 CONSOLIDATED
+PAYER'S TIN: 12-3456789                            RECIPIENT'S TIN: ***-**-4444
+Account Number: XXXX-5678
+                    Summary of Proceeds, Gains & Losses
+Short-term transactions Box A     15,150.00    16,400.00     0.00    500.00     (750.00)
+Long-term transactions Box D      20,100.00     5,200.00     0.00      0.00    14,900.00
+
+1099-DIV   Dividends and Distributions
+1a Total ordinary dividends ....................          62.40
+1b Qualified dividends .........................          62.40
+1099-INT   Interest Income
+1 Interest income ..............................          88.12
+1099-B  Proceeds From Broker and Barter Exchange Transactions
+SHORT TERM TRANSACTIONS FOR COVERED TAX LOTS - Box A
+Quantity  Acquired  Sold  Proceeds  Cost  Mkt disc  Wash  Gain/loss
+APPLE INC / CUSIP: 037833100 / Symbol: AAPL
+  50.000   01/10/25   03/03/25   11,250.00   12,000.00   ...   ...       (750.00)
+  20.000   03/10/25   04/15/25    3,900.00    4,400.00   ...   500.00W     0.00
+  Security total:                15,150.00   16,400.00         500.00    (750.00)
+LONG TERM TRANSACTIONS FOR COVERED TAX LOTS - Box D
+MICROSOFT CORP / CUSIP: 594918104
+  / Symbol: MSFT
+  40.000   06/03/19   07/14/25   20,100.00    5,200.00   ...   ...      14,900.00   Original basis: 5,200.00

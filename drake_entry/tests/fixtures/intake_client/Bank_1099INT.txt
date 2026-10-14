@@ -1,0 +1,6 @@
+FIRST NATIONAL BANK N.A.                       2025 Form 1099-INT  Interest Income
+PAYER'S TIN: 55-1234567                        RECIPIENT'S TIN: XXX-XX-4444
+Account Number: 0000-1122
+1099-INT   Interest Income
+1 Interest income ..............................         150.00
+4 Federal income tax withheld ..................           0.00

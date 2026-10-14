@@ -19,6 +19,9 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PKG = HERE.parent
 FAKE = HERE / "fake_drake"
+REPO_SRC = PKG.parent / "src"                     # brokerage_1099 package (repo layout)
+FIXTURES = HERE / "fixtures" / "intake_client"
+SAMPLE_1099 = PKG.parent / "examples" / "sample_package.json"
 PASSED = []
 
 
@@ -30,8 +33,8 @@ def check(name, cond, detail=""):
 
 
 def run(work, *args, ret="default", env=None):
-    e = {**os.environ, "PYTHONPATH": str(FAKE), "FAKE_DRAKE_STATE": str(work / "fake_state.json"),
-         "FAKE_RETURN": ret, **(env or {})}
+    e = {**os.environ, "PYTHONPATH": os.pathsep.join([str(FAKE), str(REPO_SRC)]),
+         "FAKE_DRAKE_STATE": str(work / "fake_state.json"), "FAKE_RETURN": ret, **(env or {})}
     p = subprocess.run([sys.executable, str(work / "run.py"), *args, "--assume-yes", "--initials", "QA"],
                        cwd=work, env=e, capture_output=True, text=True)
     return p.returncode, p.stdout + p.stderr
@@ -43,9 +46,9 @@ def press_esc_in_drake(work, ret):
     subprocess.run([sys.executable, "-c", "import pyautogui; pyautogui.press('esc')"], env=e, cwd=work)
 
 
-def fake_return(work, ret):
+def fake_return(work, ret, screen="W2"):
     s = json.load(open(work / "fake_state.json"))
-    return s["returns"].get(ret, {}).get("W2", [])
+    return s["returns"].get(ret, {}).get(screen, [])
 
 
 def write_input(work, rows):
@@ -177,8 +180,112 @@ def main():
     cor = [r for r in wb["Corrections"].iter_rows(min_row=5, values_only=True) if r[0]]
     check("corrections recorded with before/after", len(cor) >= 2 and any(r[5] == "99999" for r in cor), str(cor[:2]))
 
+    intake_tests(work)
+
     print(f"\nAll {len(PASSED)} checks passed.  Test output kept in {work}")
     return work
+
+
+def build_client_folder(work):
+    """A client folder with every kind of document intake has to sort out."""
+    folder = work / "Clients" / "Pat Intake"
+    shutil.copytree(FIXTURES, folder)
+    w2 = (folder / "W2_FrontRange.txt").read_text()
+    (folder / "W2_FrontRange_copy.txt").write_text(w2)                       # same file twice
+    (folder / "W2_someone_else.txt").write_text(
+        w2.replace("222-33-4444", "999-88-7777").replace("84-1234567", "66-7777777"))
+    bank = (folder / "Bank_1099INT.txt").read_text()
+    (folder / "Bank_1099INT_CORRECTED.txt").write_text(
+        bank.replace("2025 Form 1099-INT", "CORRECTED 2025 Form 1099-INT").replace("150.00", "175.00"))
+    cons = (folder / "Brokerage_Consolidated_2025.txt").read_text()
+    (folder / "Third_Securities.txt").write_text(                            # does not tie
+        cons.replace("EXAMPLE BROKERAGE LLC", "THIRD SECURITIES INC").replace("12-3456789", "77-1234567")
+            .replace("XXXX-5678", "XXXX-9999").replace("15,150.00    16,400.00", "15,250.00    16,400.00"))
+    pkg = json.loads(SAMPLE_1099.read_text())                                 # keyed JSON, noncovered lots
+    pkg.update(client="Pat Intake", recipient_tin_last4="222-33-4444")
+    pkg["payers"][0].update(name="Second Brokerage LLC", ein="45-6789012")
+    (folder / "Second_Brokerage_keyed.json").write_text(json.dumps(pkg, indent=1))
+    return folder
+
+
+def staged(work, sheet, ssn_last4="4444"):
+    import pandas as pd
+    df = pd.read_excel(work / "input" / "Client_Input.xlsx", sheet_name=sheet, header=1, dtype=str).fillna("")
+    return [r for r in df.to_dict("records") if r["client_ssn"].endswith(ssn_last4)]
+
+
+def intake_tests(work):
+    from openpyxl import load_workbook
+    print("\n10. Folder intake: classify every document and stage Schedule B / D and W-2 rows")
+    folder = build_client_folder(work)
+    code, out = run(work, "intake", str(folder.parent), ret="intake")
+    check("intake ran", code == 0 and "Intake report" in out, out)
+    expect = {"W2_FrontRange.txt": "Prepared", "W2_FrontRange_copy.txt": "Duplicate file - skipped",
+              "W2_someone_else.txt": "Refused - another person's document",
+              "Bank_1099INT.txt": "Superseded by CORRECTED", "Bank_1099INT_CORRECTED.txt": "Prepared",
+              "Brokerage_Consolidated_2025.txt": "Prepared", "Third_Securities.txt": "Refused - did not tie",
+              "Second_Brokerage_keyed.json": "Prepared", "Mortgage_1098.txt": "Recognized - not automated",
+              "notes.txt": "Unrecognized", "receipt_photo.jpg": "Needs keyed info"}
+    log = [json.loads(l) for l in (work / "logs" / "audit_log.jsonl").read_text().splitlines()]
+    got = {e["data"]["file"]: e["data"]["status"] for e in log if e["event"] == "intake_document"}
+    check("every document classified with the right status", got == expect,
+          str({k: (got.get(k), v) for k, v in expect.items() if got.get(k) != v}))
+    rows8949 = staged(work, "8949")
+    check("Schedule D staged: summary lines + one line per noncovered lot", len(rows8949) == 11,
+          str(len(rows8949)))
+    summ = [r for r in rows8949 if r["lot_ref"] == "A-SUMMARY" and "EXAMPLE" in r["description"]][0]
+    check("Box A summary carries the wash-sale W adjustment", summ["adj_code"] == "W"
+          and summ["adj_amount"] == "500.00" and summ["proceeds"] == "15150.00", str(summ))
+    ints = staged(work, "INT")
+    check("Schedule B staged from the CORRECTED 1099-INT, not the original",
+          any(r["box1"] == "175.00" for r in ints) and not any(r["box1"] == "150.00" for r in ints), str(ints))
+    check("W-2 staged once, flagged T by SSN match", len(staged(work, "W2")) == 1
+          and staged(work, "W2")[0]["ts"] == "T")
+    rep = load_workbook(sorted((work / "tracking").glob("Intake_*.xlsx"))[-1])
+    check("intake report has documents / fixes / manual tabs",
+          rep.sheetnames == ["Documents", "Fix before entry", "Enter manually"], str(rep.sheetnames))
+    manual = [r[2] for r in rep["Enter manually"].iter_rows(min_row=2, values_only=True)]
+    check("margin interest and Section 1256 listed for manual entry",
+          any("Margin" in str(m) for m in manual) and any("1256" in str(m) or "contracts" in str(m)
+                                                         for m in manual), str(manual))
+
+    code, out = run(work, "validate", "--client", "4444")
+    check("validate stops on unknown term / missing basis", code == 1 and "unknown term" in out
+          and "Cost basis is blank" in out, out[-1500:])
+    code, out = run(work, "intake", str(folder.parent), ret="intake")
+    check("re-running intake doesn't duplicate rows", "Already prepared" in out
+          and len(staged(work, "8949")) == 11, out[-800:])
+
+    # the preparer fills in what the client supplied, straight in the input workbook
+    path = work / "input" / "Client_Input.xlsx"
+    wb = load_workbook(path)
+    ws = wb["8949"]
+    names = [c.value for c in ws[2]]
+    col = {n: j for j, n in enumerate(names, 1) if n}
+    for i in range(4, ws.max_row + 1):
+        if not str(ws.cell(i, col["client_ssn"]).value or "").endswith("4444"):
+            continue
+        for name, value in (("box_8949", "E"), ("cost", "1000.00"), ("date_acquired", "01/15/2015")):
+            if not ws.cell(i, col[name]).value:
+                ws.cell(i, col[name]).value = value
+    wb.save(path)
+    code, out = run(work, "intake", str(folder.parent), "--replace", "--enter", ret="intake")
+    check("--replace keeps the preparer's entries and --enter types everything into Drake",
+          code == 0 and "Entering" in out and "entered" in out, out[-1500:])
+    check("Drake has the W-2, 11 8949 lines, 2 DIV, 3 INT, 1 OID, 1 99M",
+          [len(fake_return(work, "intake", s)) for s in ("W2", "8949", "DIV", "INT", "OID", "99M")]
+          == [1, 11, 2, 3, 1, 1],
+          str([len(fake_return(work, "intake", s)) for s in ("W2", "8949", "DIV", "INT", "OID", "99M")]))
+    code, out = run(work, "verify", "--client", "4444", ret="intake")
+    check("verify: every field in Drake matches the staged source", "Everything matches the source" in out,
+          out[-1500:])
+    wb = load_workbook(work / "tracking" / "Entry_Tracker.xlsx")
+    exc = [r for r in wb["Exceptions"].iter_rows(min_row=5, values_only=True) if r[0]]
+    check("tracker exceptions: refused documents High, manual entries listed",
+          any(r[0] == "High" and "did not tie" in str(r[5]) for r in exc)
+          and any("Enter manually" in str(r[5]) for r in exc), str(exc[:5]))
+    code, out = run(work, "audit-verify")
+    check("audit chain intact after intake", code == 0 and "PASSED" in out, out)
 
 
 if __name__ == "__main__":

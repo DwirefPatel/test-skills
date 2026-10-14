@@ -459,6 +459,7 @@ class WorkbookBuilder:
                 s.put(r, col, f"=SUMPRODUCT({match},{t.col(key)})", "formula")
             r += 1
         last = max(5, r - 1)
+        r = max(r, 6)  # with no securities, keep the total off the (empty) data range
         s.put(r, "A", "Total", bold=True)
         s.put(r, "C", f"=SUM(C5:C{last})", "formula", fmt="0", bold=True)
         for col in "DEFGH":
@@ -507,6 +508,7 @@ class WorkbookBuilder:
             s.put(r, "L", self.an.wash_notes.get(id(lot), ""), wrap=True, size=9)
             r += 1
         last = max(5, r - 1)
+        r = max(r, 6)  # with no wash lines, keep the total off the (empty) data range
         self.wash_range = (5, last)
         s.put(r, "B", "Total", bold=True)
         for col in "FGHI":
@@ -638,6 +640,7 @@ class WorkbookBuilder:
                   fill=FILL_ORANGE)
             r += 1
         last = max(5, r - 1)
+        r = max(r, 6)
         s.put(r, "C", "Total", bold=True)
         for col in "HIJKOP":
             s.put(r, col, f"=SUM({col}5:{col}{last})", "formula", bold=True)
