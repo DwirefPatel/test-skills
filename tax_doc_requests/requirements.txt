@@ -1,0 +1,5 @@
+dropbox>=12.0
+openpyxl>=3.1
+pywin32>=306; sys_platform == "win32"   # classic Outlook for Windows (--outlook desktop)
+msal>=1.24                               # only for --outlook graph
+requests>=2.31                           # only for --outlook graph
